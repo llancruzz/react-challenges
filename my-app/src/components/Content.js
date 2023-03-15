@@ -9,6 +9,7 @@ export class Content extends Component {
     super(props);
     this.state = {
       isLoaded: false,
+      posts: [],
     };
   }
 
@@ -16,15 +17,37 @@ export class Content extends Component {
     setTimeout(() => {
       this.setState({
         isLoaded: true,
+        posts: savedPosts,
       });
     }, 2000);
   }
+
+  handleChange = (event) => {
+    const name = event.target.value.toLowerCase();
+    const filteredPosts = savedPosts.filter((post) => {
+      return post.name.toLocaleLowerCase().includes(name);
+    });
+    this.setState({
+      posts: filteredPosts,
+    });
+  };
 
   render() {
     return (
       <div className={css.Content}>
         <div className={css.TitleBar}>
           <h1>My Photos</h1>
+          <form>
+            <label htmlFor="searchInput">Search:</label>
+            <input
+              type="search"
+              id="searchInput"
+              onChange={(e) => {
+                this.handleChange(e);
+              }}
+            ></input>
+            <h4>Posts found: {this.state.posts.length}</h4>
+          </form>
         </div>
 
         <div className={css.SearchResults}>
@@ -43,7 +66,7 @@ export class Content extends Component {
 
           {/* Part 2: Creating a child component */}
           {this.state.isLoaded ? (
-            <PostItem savedPosts={savedPosts} />
+            <PostItem savedPosts={this.state.posts} />
           ) : (
             <Loader />
           )}
